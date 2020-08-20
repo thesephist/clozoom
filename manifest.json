@@ -1,0 +1,26 @@
+{
+    "manifest_version": 2,
+    "name": "Clozoom",
+    "version": "1.0.0",
+    "description": "Close your Zoom meeting tabs automatically!",
+    "icons": {
+        "16": "assets/icon16.png",
+        "48": "assets/icon48.png",
+        "128": "assets/icon128.png"
+    },
+    "background": {
+        "js": "background.js",
+        "persistent": false
+    },
+    "content_scripts": [
+        {
+            "matches": ["*://*/*"],
+            "js": ["main.js"],
+            "run_at": "document_idle"
+        }
+    ],
+    "homepage_url": "https://github.com/thesephist/clozoom",
+    "offline_enabled": false,
+    "permissions": ["activeTab"],
+    "short_name": "Clozoom"
+}
