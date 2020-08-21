@@ -2,7 +2,7 @@
 
 Inspired by [this Twitter thread](https://twitter.com/phillipHbh/status/1296200573025312768), **Clozoom** is a browser extension to close your Zoom meeting tabs automatically after they've opened Zoom. With Clozoom, your Zoom attendee tabs automatically close 3 seconds after you open them, unless you cancel.
 
-![Clozoom promotional image](.assets/clozoom-1400.png)
+![Clozoom promotional image](https://raw.githubusercontent.com/thesephist/clozoom/master/.assets/clozoom-1400.png?token=ABJHKDJOPFXHNCRJ75CTR427JEUO4)
 
 ## The real story behind Clozoom
 
