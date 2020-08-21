@@ -8,10 +8,16 @@
         "scripts": ["background.js"],
         "persistent": false
     },
+    "icons": {
+        "16": "icons/16.png",
+        "48": "icons/48.png",
+        "64": "icons/64.png",
+        "128": "icons/128.png"
+    },
     "browser_action": {
         "default_popup": "popup.html"
     },
-    "homepage_url": "https://github.com/thesephist/clozoom",
+    "homepage_url": "https://thesephist.github.io/clozoom/",
     "offline_enabled": true,
     "permissions": [
         "https://*.zoom.us/j/*",
