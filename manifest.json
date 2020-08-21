@@ -3,13 +3,9 @@
     "name": "Clozoom",
     "version": "1.0.0",
     "description": "Close your Zoom meeting tabs automatically!",
-    "icons": {
-        "16": "assets/icon16.png",
-        "48": "assets/icon48.png",
-        "128": "assets/icon128.png"
-    },
+    "icons": {},
     "background": {
-        "js": "background.js",
+        "scripts": ["background.js"],
         "persistent": false
     },
     "content_scripts": [
@@ -21,6 +17,6 @@
     ],
     "homepage_url": "https://github.com/thesephist/clozoom",
     "offline_enabled": false,
-    "permissions": ["activeTab"],
+    "permissions": ["tabs"],
     "short_name": "Clozoom"
 }
