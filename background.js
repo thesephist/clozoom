@@ -14,15 +14,16 @@ function isClosableZoomInviteURL(url) {
 
 function ifEnabled(f) {
     chrome.storage.local.get({enabled: true}, result => {
-        if (!result.enabled) return;
-
-        f();
+        if (result.enabled) f();
     });
 }
 
 chrome.runtime.onMessage.addListener(msg => {
     const tabId = msg.tabId;
 
+    // this technical leaks some tabIds, but it's not serious -- Chrome
+    // instances accumulate no more tha maybe 10,000s of zoom tabIds and V8
+    // can handle those objects just fine.
     delete CLOSED_ZOOM_TABS[tabId];
 
     ifEnabled(() => {
