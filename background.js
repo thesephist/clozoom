@@ -6,7 +6,8 @@ const CLOSED_ZOOM_TABS = {};
 
 function isClosableZoomInviteURL(url) {
     // https://us02web.zoom.us/j/6830992169#success
-    const isZoomInviteURL = url.match(/https:\/\/\S+\.zoom.us\/j\/.+/);
+    // https://zoom.us/j/6830992169#success
+    const isZoomInviteURL = url.match(/https:\/\/(\S+\.)?zoom.us\/j\/.+/);
     const isSuccess = url.endsWith('#success');
 
     return isZoomInviteURL && isSuccess;
