@@ -14,7 +14,7 @@ function isClosableZoomInviteURL(url) {
 }
 
 function ifEnabled(f) {
-    chrome.storage.local.get({enabled: true}, result => {
+    chrome.storage.local.get({'enabled': true}, result => {
         if (result.enabled) f();
     });
 }
@@ -45,53 +45,57 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         if (CLOSED_ZOOM_TABS[tabId]) return;
         CLOSED_ZOOM_TABS[tabId] = true;
 
-        chrome.tabs.executeScript(tabId, {
-            code: `(function(){
-            const checkIfRendered = setInterval(() => {
-                const frame = document.querySelector('#zoom-ui-frame');
-                if (frame) {
-                    clearInterval(checkIfRendered);
-                    // fallthrough
-                } else {
-                    return;
-                }
-                const h1 = frame.querySelector('h1');
-                const div = document.createElement('div');
-                div.classList.add('clozoom-dialog');
-                h1.after(div);
+        chrome.storage.local.get({'secondsToClose': 15}, result => {
+            const millisecondsToClose = 1000 * result.secondsToClose;
 
-                function renderText(text) {
-                    div.textContent = text;
-
-                    const a = document.createElement('a');
-                    a.href = '#';
-                    a.textContent = 'Cancel';
-                    a.onclick = () => {
-                        autoClose = false;
-                        clearInterval(interval);
-                        renderText('Clozoom won\\\'t auto-close this tab. ');
+            chrome.tabs.executeScript(tabId, {
+                code: `(function(){
+                const checkIfRendered = setInterval(() => {
+                    const frame = document.querySelector('#zoom-ui-frame');
+                    if (frame) {
+                        clearInterval(checkIfRendered);
+                        // fallthrough
+                    } else {
+                        return;
                     }
-                    div.appendChild(a);
-                }
-
-                let counter = 3;
-                let autoClose = true;
-                const renderCounter = () => {
-                    if (counter <= 0) {
-                        clearInterval(interval);
+                    const h1 = frame.querySelector('h1');
+                    const div = document.createElement('div');
+                    div.classList.add('clozoom-dialog');
+                    h1.after(div);
+    
+                    function renderText(text) {
+                        div.textContent = text;
+    
+                        const a = document.createElement('a');
+                        a.href = '#';
+                        a.textContent = 'Cancel';
+                        a.onclick = () => {
+                            autoClose = false;
+                            clearInterval(interval);
+                            renderText('Clozoom won\\\'t auto-close this tab. ');
+                        }
+                        div.appendChild(a);
                     }
-                    renderText('Clozoom closing this tab in ' + counter + ' seconds... ');
-                    counter--;
-                }
-                renderCounter();
-                const interval = setInterval(renderCounter, 1000);
-
-                setTimeout(() => {
-                    if (!autoClose) return;
-                    chrome.runtime.sendMessage({tabId: ${tabId}});
-                }, 3000);
-            }, 250);
-            })()`,
+    
+                    let counter = ${result.secondsToClose};
+                    let autoClose = true;
+                    const renderCounter = () => {
+                        if (counter <= 0) {
+                            clearInterval(interval);
+                        }
+                        renderText('Clozoom closing this tab in ' + counter + ' seconds... ');
+                        counter--;
+                    }
+                    renderCounter();
+                    const interval = setInterval(renderCounter, 1000);
+    
+                    setTimeout(() => {
+                        if (!autoClose) return;
+                        chrome.runtime.sendMessage({tabId: ${tabId}});
+                    }, ${millisecondsToClose});
+                }, 250);
+                })()`,
+            });
         });
     })
 });

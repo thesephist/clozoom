@@ -30,8 +30,11 @@ a:hover {
 
 <label class="enableToggle">
     <input type="checkbox" />
-    Close Zoom meeting invites automatically
+    Close Zoom meeting invites automatically in
+    <input type="number" id="timeout" min="1" max="600" value="5">
+    seconds
 </label>
+
 <a href="https://thesephist.github.io/clozoom/" target="_blank">About Clozoom</a>
 
 <script src="popup.js"></script>
