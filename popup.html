@@ -6,7 +6,7 @@ body {
     padding: 1em;
     font-family: system-ui, sans-serif;
 }
-label {
+.enableToggle {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -28,12 +28,12 @@ a:hover {
 }
 </style>
 
-<label class="enableToggle">
-    <input type="checkbox" />
-    Close Zoom meeting invites automatically in
-    <input type="number" id="timeout" min="1" max="600" value="5">
+<div class="enableToggle">
+    <input type="checkbox" id="closeAutomatically" />
+    Close Zoom meeting invites automatically after
+    <input type="number" id="timeout" min="1" max="600" value="10" placeholder="10">
     seconds
-</label>
+</div>
 
 <a href="https://thesephist.github.io/clozoom/" target="_blank">About Clozoom</a>
 
