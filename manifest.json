@@ -21,8 +21,11 @@
     "homepage_url": "https://thesephist.github.io/clozoom/",
     "offline_enabled": true,
     "permissions": [
-        "https://*.zoom.us/j/*",
         "tabs",
-        "storage"
+        "storage",
+        "scripting"
+    ],
+    "host_permissions": [
+        "https://*.zoom.us/j/*"
     ]
 }

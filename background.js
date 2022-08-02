@@ -36,65 +36,68 @@ chrome.runtime.onMessage.addListener(msg => {
     });
 });
 
+function injectedFunction(secondsToClose, tabId) {
+    const checkIfRendered = setInterval(() => {
+        const frame = document.querySelector('#zoom-ui-frame');
+        if (frame) {
+            clearInterval(checkIfRendered);
+            // fallthrough
+        } else {
+            return;
+        }
+        const h1 = frame.querySelector('h1');
+        const div = document.createElement('div');
+        div.classList.add('clozoom-dialog');
+        h1.after(div);
+
+        function renderText(text) {
+            div.textContent = text;
+
+            const a = document.createElement('a');
+            a.href = '#';
+            a.textContent = 'Cancel';
+            a.onclick = () => {
+                autoClose = false;
+                clearInterval(interval);
+                renderText('Clozoom won\\\'t auto-close this tab. ');
+            }
+            div.appendChild(a);
+        }
+
+        let counter = secondsToClose;
+        let autoClose = true;
+        const renderCounter = () => {
+            if (counter <= 0) {
+                clearInterval(interval);
+            }
+            renderText('Clozoom closing this tab in ' + counter + ' seconds... ');
+            counter--;
+        }
+        renderCounter();
+        const interval = setInterval(renderCounter, 1000);
+
+        setTimeout(() => {
+            if (!autoClose) return;
+            chrome.runtime.sendMessage({tabId: tabId});
+        }, 1000 * secondsToClose);
+    }, 250);
+}
+
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     const url = tab.url;
     if (!isClosableZoomInviteURL(url)) return;
-
 
     ifEnabled(() => {
         if (CLOSED_ZOOM_TABS[tabId]) return;
         CLOSED_ZOOM_TABS[tabId] = true;
 
-        chrome.storage.local.get({'secondsToClose': 15}, result => {
+        chrome.storage.local.get({'secondsToClose': 10}, result => {
             const millisecondsToClose = 1000 * result.secondsToClose;
 
-            chrome.tabs.executeScript(tabId, {
-                code: `(function(){
-                const checkIfRendered = setInterval(() => {
-                    const frame = document.querySelector('#zoom-ui-frame');
-                    if (frame) {
-                        clearInterval(checkIfRendered);
-                        // fallthrough
-                    } else {
-                        return;
-                    }
-                    const h1 = frame.querySelector('h1');
-                    const div = document.createElement('div');
-                    div.classList.add('clozoom-dialog');
-                    h1.after(div);
-    
-                    function renderText(text) {
-                        div.textContent = text;
-    
-                        const a = document.createElement('a');
-                        a.href = '#';
-                        a.textContent = 'Cancel';
-                        a.onclick = () => {
-                            autoClose = false;
-                            clearInterval(interval);
-                            renderText('Clozoom won\\\'t auto-close this tab. ');
-                        }
-                        div.appendChild(a);
-                    }
-    
-                    let counter = ${result.secondsToClose};
-                    let autoClose = true;
-                    const renderCounter = () => {
-                        if (counter <= 0) {
-                            clearInterval(interval);
-                        }
-                        renderText('Clozoom closing this tab in ' + counter + ' seconds... ');
-                        counter--;
-                    }
-                    renderCounter();
-                    const interval = setInterval(renderCounter, 1000);
-    
-                    setTimeout(() => {
-                        if (!autoClose) return;
-                        chrome.runtime.sendMessage({tabId: ${tabId}});
-                    }, ${millisecondsToClose});
-                }, 250);
-                })()`,
+            chrome.scripting.executeScript({
+                target: {tabId: tabId},
+                func: injectedFunction,
+                args: [result.secondsToClose, tabId],
             });
         });
     })

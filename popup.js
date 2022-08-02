@@ -6,7 +6,7 @@ chrome.storage.local.get({'enabled': true}, result => {
     input.checked = result.enabled;
 });
 
-chrome.storage.local.get({'secondsToClose': 5}, result => {
+chrome.storage.local.get({'secondsToClose': 10}, result => {
     timeout.value = result.secondsToClose;
 });
 
